@@ -70,4 +70,67 @@ document.addEventListener('DOMContentLoaded', function() {
       contactForm.reset();
     });
   }
+
+  // Gallery lightbox
+  const galleryItems = document.querySelectorAll('.gallery-item');
+  if (galleryItems.length) {
+    const lightbox = document.createElement('div');
+    lightbox.className = 'lightbox';
+    lightbox.setAttribute('role', 'dialog');
+    lightbox.setAttribute('aria-label', 'Gallery image viewer');
+    lightbox.innerHTML =
+      '<button class="lightbox-close" aria-label="Close"><i class="fas fa-times"></i></button>' +
+      '<button class="lightbox-prev" aria-label="Previous image"><i class="fas fa-chevron-left"></i></button>' +
+      '<img src="" alt="" />' +
+      '<div class="lightbox-caption"><h4></h4><p></p></div>' +
+      '<button class="lightbox-next" aria-label="Next image"><i class="fas fa-chevron-right"></i></button>';
+    document.body.appendChild(lightbox);
+
+    const img = lightbox.querySelector('img');
+    const capTitle = lightbox.querySelector('.lightbox-caption h4');
+    const capText = lightbox.querySelector('.lightbox-caption p');
+    let current = 0;
+
+    function show(index) {
+      current = (index + galleryItems.length) % galleryItems.length;
+      const item = galleryItems[current];
+      const source = item.querySelector('img').src;
+      const caption = item.querySelector('.gallery-caption');
+      img.src = source;
+      img.alt = item.querySelector('img').alt;
+      capTitle.textContent = caption ? caption.querySelector('h4').textContent : '';
+      capText.textContent = caption ? caption.querySelector('p').textContent : '';
+    }
+
+    function open(index) {
+      show(index);
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function close() {
+      lightbox.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    galleryItems.forEach(function(item, index) {
+      item.addEventListener('click', function() { open(index); });
+    });
+
+    lightbox.querySelector('.lightbox-close').addEventListener('click', close);
+    lightbox.querySelector('.lightbox-prev').addEventListener('click', function() { show(current - 1); });
+    lightbox.querySelector('.lightbox-next').addEventListener('click', function() { show(current + 1); });
+
+    // Click the dark backdrop (not the image) to close
+    lightbox.addEventListener('click', function(e) {
+      if (e.target === lightbox || e.target.classList.contains('lightbox-caption')) close();
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (!lightbox.classList.contains('active')) return;
+      if (e.key === 'Escape') close();
+      if (e.key === 'ArrowLeft') show(current - 1);
+      if (e.key === 'ArrowRight') show(current + 1);
+    });
+  }
 });

@@ -88,22 +88,15 @@ img {
   padding: 16px 32px;
   font-family: 'Anton', 'Bebas Neue', sans-serif;
   font-size: 1.15rem;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, color 0.25s ease;
-  border-radius: 6px;
 }
 
 .btn-primary {
   background: var(--yellow);
   color: var(--navy);
-  box-shadow: var(--shadow-yellow);
+  transition: transform 0.5s ease, filter 0.5s ease;
 }
 
 .btn-primary:hover {
-  background: var(--yellow-dark);
   transform: translateY(-3px);
   box-shadow: 0 12px 28px rgba(255,199,44,0.45);
 }
@@ -992,7 +985,7 @@ img {
 
 .service-detail-card {
   display: grid;
-  grid-template-columns: 160px 1fr;
+  grid-template-columns: 1fr;
   gap: 0;
   background: var(--white);
   border-radius: var(--radius);
@@ -1008,7 +1001,8 @@ img {
 }
 
 .service-detail-card .service-image {
-  min-height: 100%;
+  width: 100%;
+  height: 280px;
   position: relative;
   overflow: hidden;
 }
@@ -1017,11 +1011,12 @@ img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  transition: transform 0.5s ease, filter 0.5s ease;
 }
 
 .service-detail-card:hover .service-image img {
-  transform: scale(1.08);
+  transform: scale(1.12);
+  filter: brightness(1.08) saturate(1.1);
 }
 
 .service-detail-card .service-info {
@@ -1390,18 +1385,24 @@ img {
 }
 
 .gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
   gap: 20px;
+  overflow-x: auto;
+  padding: 4px 4px 18px;
+  scroll-snap-type: x mandatory;
+  scrollbar-color: var(--yellow) var(--border);
+  scrollbar-width: thin;
 }
 
 .gallery-item {
+  flex: 0 0 400px;
   position: relative;
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
   aspect-ratio: 4 / 3;
   cursor: pointer;
+  scroll-snap-align: start;
 }
 
 .gallery-item img {
@@ -1413,12 +1414,6 @@ img {
 
 .gallery-item:hover img {
   transform: scale(1.10);
-}
-
-.gallery-item.large {
-  grid-column: span 2;
-  grid-row: span 2;
-  aspect-ratio: 1 / 1;
 }
 
 .gallery-caption {
@@ -1447,6 +1442,99 @@ img {
 .gallery-caption p {
   font-size: 0.82rem;
   opacity: 0.9;
+}
+
+/* Gallery lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 16, 30, 0.94);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.lightbox.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.lightbox img {
+  max-width: min(1100px, 90vw);
+  max-height: 80vh;
+  width: auto;
+  height: auto;
+  border-radius: var(--radius);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  transform: scale(0.94);
+  transition: transform 0.3s ease;
+}
+
+.lightbox.active img {
+  transform: scale(1);
+}
+
+.lightbox-caption {
+  margin-top: 18px;
+  color: var(--white);
+  text-align: center;
+  max-width: 90vw;
+}
+
+.lightbox-caption h4 {
+  color: var(--white);
+  font-size: 1.2rem;
+  margin-bottom: 4px;
+  letter-spacing: 1px;
+}
+
+.lightbox-caption p {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+.lightbox-close,
+.lightbox-prev,
+.lightbox-next {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--white);
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.25s ease;
+}
+
+.lightbox-close:hover,
+.lightbox-prev:hover,
+.lightbox-next:hover {
+  background: var(--yellow);
+  color: var(--navy);
+}
+
+.lightbox-close { top: 24px; right: 24px; }
+.lightbox-prev { left: 24px; top: 50%; transform: translateY(-50%); }
+.lightbox-next { right: 24px; top: 50%; transform: translateY(-50%); }
+
+@media (max-width: 768px) {
+  .lightbox-close { top: 14px; right: 14px; }
+  .lightbox-prev { left: 10px; }
+  .lightbox-next { right: 10px; }
+  .lightbox-close,
+  .lightbox-prev,
+  .lightbox-next { width: 40px; height: 40px; font-size: 1rem; }
+  .lightbox img { max-width: 94vw; max-height: 70vh; }
 }
 
 /* =====================================================
@@ -2006,6 +2094,7 @@ img {
   }
 
   .service-detail-card .service-image {
+    width: 100%;
     height: 200px;
   }
 
